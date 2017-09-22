@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="entity.TopicsEntity" table="topics" schema="app1_db">
+        <id name="topicId" column="topic_ID"/>
+        <property name="topicName" column="topic_name"/>
+        <property name="topicDescription" column="topic_description"/>
+        <set name="listoftopicsinmaterialsByTopicId" inverse="true">
+            <key>
+                <column name="list_topic_ID"/>
+            </key>
+            <one-to-many not-found="ignore" class="entity.ListoftopicsinmaterialEntity"/>
+        </set>
+        <set name="sectionsByTopicId" inverse="true">
+            <key>
+                <column name="section_topic_ID"/>
+            </key>
+            <one-to-many not-found="ignore" class="entity.SectionsEntity"/>
+        </set>
+    </class>
+</hibernate-mapping>

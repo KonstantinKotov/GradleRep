@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="entity.UsersEntity" table="users" schema="app1_db">
+        <id name="userId" column="user_ID"/>
+        <property name="userFirstName" column="user_first_Name"/>
+        <property name="userSecondName" column="user_second_Name"/>
+        <property name="userMidName" column="user_mid_Name"/>
+        <property name="userSex" column="user_sex"/>
+        <property name="userBirthDate" column="user_birth_Date"/>
+        <property name="userWorkFromDate" column="user_work_From_Date"/>
+        <property name="userPosition" column="user_position"/>
+        <property name="userDepartment" column="user_department"/>
+
+        <property name="userLogin" column="user_login" insert="false" update="false"/>
+        <many-to-one name="materialsByUserMaterialId" class="entity.MaterialsEntity">
+            <column name="user_material_ID"/>
+        </many-to-one>
+        <many-to-one name="usersAccessByUserLogin" class="entity.UsersAccessEntity">
+            <column name="user_login"/>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

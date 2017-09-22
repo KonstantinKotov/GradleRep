@@ -1,10 +1,16 @@
-package TestServlet;
+package servletshibernate;
 
 import dao.*;
+import daohibernate.*;
+import entity.*;
+import org.hibernate.HibernateException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
@@ -21,30 +27,29 @@ public class MethodServlet extends HttpServlet {
 
     public void pageTopics(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Integer id = makeParamID(request, response, "topID");
-        try {
         HttpSession session = request.getSession();
-        TopicDao topicDao  = (MySqlTopicDao) session.getAttribute("topicDao");
-        SectionDao sectionDao = (MySqlSectionDao) session.getAttribute("sectionDao");
+        try {
 
-            List<ListOfTopicsInInfoMaterial> listOfTopics =
-                    (List<ListOfTopicsInInfoMaterial>) session.getAttribute("listOfTop");
-            Topic topic = topicDao.read(listOfTopics.get(id));
-            List<Section> listSections = sectionDao.read(topic);
+        ManageTopics manageTopics = (ManageTopics) session.getAttribute("manageTopics");
+        ManageSections manageSections = (ManageSections) session.getAttribute("manageSections");
+
+            List<ListoftopicsinmaterialEntity> listOfTopics =
+                    (List<ListoftopicsinmaterialEntity>) session.getAttribute("listOfTop");
+            TopicsEntity topic = manageTopics.read(listOfTopics.get(id));
+            List<SectionsEntity> listSections = manageSections.read(topic);
             session.setAttribute("listOfSections", listSections);
-            User user = (User) session.getAttribute("user");
+            UsersEntity user = (UsersEntity) session.getAttribute("user");
 
-            request.setAttribute("user", user.getFirstName() + " " + user.getSecondName());
+            request.setAttribute("user", user.getUserFirstName() + " " + user.getUserSecondName());
             request.setAttribute("topic_name", topic.getTopicName());
             request.setAttribute("topic_description", topic.getTopicDescription());
             for (int i = 0; i < listSections.size(); i++) {
                 request.setAttribute("section_name" + i, listSections.get(i).getSectionName());
             }
             getServletContext().getRequestDispatcher("/page3.jsp").forward(request, response);
-        } catch (DAOException e) {
-            request.setAttribute("error", "Sorry, we have a problem with DB and we are working on it.");
-            getServletContext().getRequestDispatcher("/errorPage.jsp").forward(request, response);
-        } catch (Exception e) {
-            request.setAttribute("error", "Sorry, we have a problem and we are working on it.");
+        } catch (HibernateException e) {
+            request.setAttribute("error", "Sorry, we have a problem with DB and we are working on it."+
+                    e.getClass()+ e.getStackTrace());
             getServletContext().getRequestDispatcher("/errorPage.jsp").forward(request, response);
         }
     }
@@ -54,13 +59,13 @@ public class MethodServlet extends HttpServlet {
         HttpSession session = request.getSession();
 
         try {
-            List<Section> listOfSections =
-                    (List<Section>) session.getAttribute("listOfSections");
-            Section section = listOfSections.get(id);
-            User user = (User) session.getAttribute("user");
-            request.setAttribute("user", user.getFirstName() + " " + user.getSecondName());
+            List<SectionsEntity> listOfSections =
+                    (List<SectionsEntity>) session.getAttribute("listOfSections");
+            SectionsEntity section = listOfSections.get(id);
+            UsersEntity user = (UsersEntity) session.getAttribute("user");
+            request.setAttribute("user", user.getUserFirstName() + " " + user.getUserSecondName());
             request.setAttribute("section_name", section.getSectionName());
-            request.setAttribute("section_content", section.getSectionContext());
+            request.setAttribute("section_content", section.getSectionContent());
             for (int i = 0; i < listOfSections.size(); i++) {
                 request.setAttribute("section_name" + i, listOfSections.get(i).getSectionName());
             }
@@ -74,12 +79,12 @@ public class MethodServlet extends HttpServlet {
 
     public void home(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        List<ListOfTopicsInInfoMaterial> listOfTopics =
-                (List<ListOfTopicsInInfoMaterial>) session.getAttribute("listOfTop");
-        User user = (User) session.getAttribute("user");
-        request.setAttribute("user", user.getFirstName() + " " + user.getSecondName());
+        List<ListoftopicsinmaterialEntity> listOfTopics =
+                (List<ListoftopicsinmaterialEntity>) session.getAttribute("listOfTop");
+        UsersEntity user = (UsersEntity) session.getAttribute("user");
+        request.setAttribute("user", user.getUserFirstName() + " " + user.getUserSecondName());
         for (int i = 0; i < listOfTopics.size(); i++) {
-            request.setAttribute("topic" + i, listOfTopics.get(i).getTopicName());
+            request.setAttribute("topic" + i, listOfTopics.get(i).getTopicsByListTopicId().getTopicName());
         }
         getServletContext().getRequestDispatcher("/page2.jsp").forward(request, response);
     }
@@ -90,27 +95,26 @@ public class MethodServlet extends HttpServlet {
         HttpSession session = request.getSession();
 
         try {
-
-            MySqlAccessDao accessDao = (MySqlAccessDao) session.getAttribute("accessDao");
-            MySqlUserDao userDao = (MySqlUserDao) session.getAttribute("userDao");
-            MySqlListOfTopicsDao listOfTopicsDao = (MySqlListOfTopicsDao) session.getAttribute("listOfTopicsDao");
-            MySqlMaterialDao materialDao = (MySqlMaterialDao) session.getAttribute("materialDao");
+            ManageAccess manageAccess = (ManageAccess) session.getAttribute("manageAccess");
+            ManageUser manageUser = (ManageUser) session.getAttribute("manageUser");
+            ManageMaterial manageMaterial = (ManageMaterial) session.getAttribute("manageMaterial");
+            ManageListOfTopics manageListOfTopics = (ManageListOfTopics) session.getAttribute("manageListOfTopics");
 
             if (login.isEmpty()) {
                 request.setAttribute("message", "Fill in login field");
             } else {
-                Access access = accessDao.read(login);
-                if (login.equals(access.getLogin()) && password.equals(access.getPassword())) {
-                    User user = userDao.read(access);
+                UsersAccessEntity access = manageAccess.read(login);
+                if (login.equals(access.getAccessLogin()) && password.equals(access.getAccessPassword())) {
+                    UsersEntity user = manageUser.read(access);
 
                     session.setAttribute("user", user);
-                    InfoMaterial material = materialDao.read(user);
-                    List<ListOfTopicsInInfoMaterial> listOfTopicsInInfoMaterial = listOfTopicsDao.read(material);
+                    MaterialsEntity material = manageMaterial.read(user);
+                    List<ListoftopicsinmaterialEntity> listOfTopicsInInfoMaterial = manageListOfTopics.read(material);
                     session.setAttribute("listOfTop", listOfTopicsInInfoMaterial);
 
-                    request.setAttribute("user", user.getFirstName() + " " + user.getSecondName());
+                    request.setAttribute("user", user.getUserFirstName() + " " + user.getUserSecondName());
                     for (int i = 0; i < listOfTopicsInInfoMaterial.size(); i++) {
-                        request.setAttribute("topic" + i, listOfTopicsInInfoMaterial.get(i).getTopicName());
+                        request.setAttribute("topic" + i, listOfTopicsInInfoMaterial.get(i).getTopicsByListTopicId().getTopicName());
                     }
                     getServletContext().getRequestDispatcher("/page2.jsp").forward(request, response);
                 } else {
@@ -118,11 +122,13 @@ public class MethodServlet extends HttpServlet {
                 }
             }
             getServletContext().getRequestDispatcher("/index.jsp").forward(request, response);
-        } catch (DAOException e) {
-            request.setAttribute("error", "Sorry, we have a problem and we are working on it");
+        } catch (HibernateException e) {
+            request.setAttribute("error", "Sorry, we have a problem and we are working on it" +
+                    e.getClass()+ e.getStackTrace());
             getServletContext().getRequestDispatcher("/errorPage.jsp").forward(request, response);
         } catch (Throwable e) {
-            request.setAttribute("error", "Sorry, we have a problem and we are working on it. ExceptionT");
+            request.setAttribute("error", "Sorry, we have a problem and we are working on it. ExceptionT"+
+                    e.getClass()+ e.getStackTrace());
             getServletContext().getRequestDispatcher("/errorPage.jsp").forward(request, response);
         }
     }
@@ -218,22 +224,22 @@ public class MethodServlet extends HttpServlet {
 
     public  void profile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-        List<ListOfTopicsInInfoMaterial> listOfTopicsInInfoMaterial =
-                (List<ListOfTopicsInInfoMaterial>) session.getAttribute("listOfTop");
+        UsersEntity user = (UsersEntity) session.getAttribute("user");
+        List<ListoftopicsinmaterialEntity> listOfTopicsInInfoMaterial =
+                (List<ListoftopicsinmaterialEntity>) session.getAttribute("listOfTop");
 
-        request.setAttribute("userName", user.getFirstName() + " " + user.getSecondName());
-        request.setAttribute("firstName", user.getFirstName());
-        request.setAttribute("secondName", user.getSecondName());
-        request.setAttribute("midName", user.getMidName());
-        request.setAttribute("sex", user.getSex());
-        request.setAttribute("birthDate", user.getBirthDate());
-        request.setAttribute("workStartDate", user.getWorkFromDate());
-        request.setAttribute("department", user.getDepartment());
-        request.setAttribute("position", user.getPosition());
+        request.setAttribute("userName", user.getUserFirstName() + " " + user.getUserSecondName());
+        request.setAttribute("firstName", user.getUserFirstName());
+        request.setAttribute("secondName", user.getUserSecondName());
+        request.setAttribute("midName", user.getUserMidName());
+        request.setAttribute("sex", user.getUserSex());
+        request.setAttribute("birthDate", user.getUserBirthDate());
+        request.setAttribute("workStartDate", user.getUserWorkFromDate());
+        request.setAttribute("department", user.getUserDepartment());
+        request.setAttribute("position", user.getUserPosition());
 
         for (int i = 0; i < listOfTopicsInInfoMaterial.size(); i++) {
-            request.setAttribute("topic" + i, listOfTopicsInInfoMaterial.get(i).getTopicName());
+            request.setAttribute("topic" + i, listOfTopicsInInfoMaterial.get(i).getTopicsByListTopicId().getTopicName());
         }
 
         getServletContext().getRequestDispatcher("/profile.jsp").forward(request, response);

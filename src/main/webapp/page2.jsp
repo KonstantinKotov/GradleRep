@@ -1,4 +1,4 @@
-<%@ page import="dao.User" %><%--
+<%--
   Created by IntelliJ IDEA.
   User: k.kotov
   Date: 02.08.2017

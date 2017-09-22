@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="entity.ListoftopicsinmaterialEntity" table="listoftopicsinmaterial" schema="app1_db">
+        <id name="listId" column="list_ID"/>
+
+        <property name="listMaterialId" column="list_material_ID" insert="false" update="false"/>
+        <many-to-one name="materialsByListMaterialId" class="entity.MaterialsEntity">
+            <column name="list_material_ID"/>
+        </many-to-one>
+
+        <property name="listTopicId" column="list_topic_ID" insert="false" update="false"/>
+        <many-to-one name="topicsByListTopicId" class="entity.TopicsEntity">
+            <column name="list_topic_ID"/>
+        </many-to-one>
+    </class>
+</hibernate-mapping>
