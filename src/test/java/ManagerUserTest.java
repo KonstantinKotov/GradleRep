@@ -41,7 +41,7 @@ public class ManagerUserTest {
         //assertEquals(userExpected.getWorkFromDate(), user.getWorkFromDate());
         assertEquals(userExpected.getUserPosition(), user.getUserPosition());
         assertEquals(userExpected.getUserDepartment(), user.getUserDepartment());
-        assertEquals(userExpected.getUserMaterialId(), user.getMaterialsByUserMaterialId().getMaterialId());
+       assertEquals(userExpected.getUserMaterialId(), user.getMaterialsByUserMaterialId().getMaterialId());
         //assertEquals(userExpected.getLogin(), user.getLogin());
     }
 }

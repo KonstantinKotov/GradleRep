@@ -1,13 +1,27 @@
 package entity;
 
-/**
- * Created by k.kotov on 11.09.2017.
- */
+import javax.persistence.*;
+
+@Entity
+@Table(name = "sections")
 public class SectionsEntity {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "section_ID")
     private int sectionId;
+
+    @Column(name = "section_name")
     private String sectionName;
+
+    @Column(name = "section_content")
     private String sectionContent;
+
+    @Column(name = "section_topic_ID")
     private int sectionTopicId;
+
+    @ManyToOne
+    @JoinColumn(name = "section_topic_ID", insertable = false, updatable = false)
     private TopicsEntity topicsBySectionTopicId;
 
     public int getSectionId() {

@@ -1,23 +1,53 @@
 package entity;
 
+import javax.persistence.*;
 import java.sql.Date;
 
-/**
- * Created by k.kotov on 11.09.2017.
- */
+@Entity
+@Table(name = "users")
 public class UsersEntity {
+    @Id
+    @GeneratedValue
+    @Column (name = "user_ID")
     private int userId;
+
+    @Column(name = "user_first_Name")
     private String userFirstName;
+
+    @Column(name = "user_second_Name")
     private String userSecondName;
+
+    @Column(name = "user_mid_Name")
     private String userMidName;
+
+    @Column(name = "user_sex")
     private String userSex;
+
+    @Column(name = "user_birth_Date")
     private Date userBirthDate;
+
+    @Column(name = "user_work_From_Date")
     private Date userWorkFromDate;
+
+    @Column(name = "user_position")
     private String userPosition;
+
+    @Column(name = "user_department")
     private String userDepartment;
+
+    @Column(name = "user_material_ID")
     private int userMaterialId;
+
+    @Column(name = "user_login")
     private int userLogin;
+
+
+    @ManyToOne
+    @JoinColumn(name = "user_material_ID", insertable = false, updatable = false)
     private MaterialsEntity materialsByUserMaterialId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_login", insertable = false, updatable = false)
     private UsersAccessEntity usersAccessByUserLogin;
 
     public int getUserId() {
@@ -97,7 +127,7 @@ public class UsersEntity {
     }
 
     public void setUserMaterialId(int userMaterialId) {
-        this.userMaterialId = userMaterialId;
+       this.userMaterialId = userMaterialId;
     }
 
     public int getUserLogin() {
@@ -105,7 +135,7 @@ public class UsersEntity {
     }
 
     public void setUserLogin(int userLogin) {
-        this.userLogin = userLogin;
+       this.userLogin = userLogin;
     }
 
     @Override

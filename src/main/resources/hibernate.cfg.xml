@@ -19,13 +19,13 @@
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 
         <!-- List of XML mapping files -->
+        <mapping class="entity.UsersAccessEntity"/>
+        <mapping class="entity.UsersEntity"/>
+        <mapping class="entity.MaterialsEntity"/>
+        <mapping class="entity.ListoftopicsinmaterialEntity"/>
+        <mapping class="entity.TopicsEntity"/>
+        <mapping class="entity.SectionsEntity"/>
 
-        <mapping resource="ListoftopicsinmaterialEntity.hbm.xml"/>
-        <mapping resource="MaterialsEntity.hbm.xml"/>
-        <mapping resource="SectionsEntity.hbm.xml"/>
-        <mapping resource="TopicsEntity.hbm.xml"/>
-        <mapping resource="UsersEntity.hbm.xml"/>
-        <mapping resource="UsersAccessEntity.hbm.xml"/>
 
     </session-factory>
 </hibernate-configuration>

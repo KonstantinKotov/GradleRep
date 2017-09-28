@@ -1,15 +1,27 @@
 package entity;
 
+import javax.persistence.*;
 import java.util.Collection;
 
-/**
- * Created by k.kotov on 11.09.2017.
- */
+@Entity
+@Table(name = "materials")
 public class MaterialsEntity {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "material_ID")
     private int materialId;
+
+    @Column(name = "material_name")
     private String materialName;
+
+    @Column(name = "material_description")
     private String materialDescription;
+
+    @OneToMany(mappedBy = "materialsByListMaterialId")
     private Collection<ListoftopicsinmaterialEntity> listoftopicsinmaterialsByMaterialId;
+
+    @OneToMany(mappedBy = "materialsByUserMaterialId")
     private Collection<UsersEntity> usersByMaterialId;
 
     public int getMaterialId() {
@@ -73,3 +85,4 @@ public class MaterialsEntity {
         this.usersByMaterialId = usersByMaterialId;
     }
 }
+

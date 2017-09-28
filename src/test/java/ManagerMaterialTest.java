@@ -21,7 +21,7 @@ public class ManagerMaterialTest {
         expectedMaterial.setMaterialDescription("Описаниетестового материала");
 
         UsersEntity user = new UsersEntity();
-        user.setUserMaterialId(3);
+        user.setUserMaterialId(1);
 
 
         ManageMaterial manageMaterial = new ManageMaterial();

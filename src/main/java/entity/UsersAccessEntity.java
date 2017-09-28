@@ -1,14 +1,36 @@
 package entity;
 
+
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import java.util.Collection;
 
-/**
- * Created by k.kotov on 11.09.2017.
- */
+@Entity
+@Table(name = "users_access")
 public class UsersAccessEntity {
+    @Id
+    @GeneratedValue
+    @Column(name = "access_ID" )
     private int accessId;
+
+    @Column(name = "access_login")
     private String accessLogin;
+
+    @Column(name = "access_password")
     private String accessPassword;
+
+    @OneToMany (mappedBy = "usersAccessByUserLogin")
     private Collection<UsersEntity> usersByAccessId;
 
     public int getAccessId() {

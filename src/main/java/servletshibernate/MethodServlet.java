@@ -1,6 +1,5 @@
 package servletshibernate;
 
-import dao.*;
 import daohibernate.*;
 import entity.*;
 import org.hibernate.HibernateException;
@@ -151,9 +150,9 @@ public class MethodServlet extends HttpServlet {
                 case "home":
                     home(request, response);
                     break;
-                case "signOut":
-                    signOut(request, response);
-                    break;
+                //case "signOut":
+                    //signOut(request, response);
+                    //break;
                 case "profile":
                     profile(request, response);
                     break;
@@ -170,7 +169,7 @@ public class MethodServlet extends HttpServlet {
         return page;
     }
 
-    public  void signOut(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
+   /* public  void signOut(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
         Throwable t = null;
         HttpSession session = request.getSession();
         TopicDao topicDao = (TopicDao) session.getAttribute("topicDao");
@@ -220,7 +219,7 @@ public class MethodServlet extends HttpServlet {
         }
         session.invalidate();
         getServletContext().getRequestDispatcher("/index.jsp").forward(request, response);
-    }
+    }*/
 
     public  void profile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         HttpSession session = request.getSession();

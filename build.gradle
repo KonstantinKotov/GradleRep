@@ -19,5 +19,6 @@ dependencies {
     compile files('C:/Program Files (x86)/MySQL/Connector.J 5.1/mysql-connector-java-5.1.42-bin.jar/')
     compile fileTree(dir: 'C:/Program Files (x86)/MySQL/Connector.J 5.1', include: '*.jar')
     compile 'javax.servlet:javax.servlet-api:4.0.0-b07'
-    compile 'org.hibernate:hibernate-core:5.2.10.Final'
+    compile 'org.hibernate:hibernate-core:5.2.11.Final'
+
 }

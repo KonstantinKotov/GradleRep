@@ -31,7 +31,6 @@ public class ManageTopics {
     }finally {
         session.close();
     }
-
         return topic.get(0);
     }
 }

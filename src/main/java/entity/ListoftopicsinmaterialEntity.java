@@ -1,10 +1,29 @@
 package entity;
 
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "listoftopicsinmaterial")
 public class ListoftopicsinmaterialEntity {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "list_ID")
     private int listId;
+
+    @Column(name = "list_material_ID")
     private int listMaterialId;
+
+    @Column(name = "list_topic_ID")
     private int listTopicId;
+
+    @ManyToOne
+    @JoinColumn(name = "list_material_ID", insertable = false, updatable = false)
     private MaterialsEntity materialsByListMaterialId;
+
+    @ManyToOne
+    @JoinColumn(name = "list_topic_ID", insertable = false, updatable = false)
     private TopicsEntity topicsByListTopicId;
 
 

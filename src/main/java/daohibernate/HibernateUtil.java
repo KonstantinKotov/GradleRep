@@ -1,9 +1,8 @@
 package daohibernate;
 
+
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-
-import java.io.File;
 
 /**
  * Created by k.kotov on 11.09.2017.

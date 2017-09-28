@@ -1,15 +1,27 @@
 package entity;
 
+import javax.persistence.*;
 import java.util.Collection;
 
-/**
- * Created by k.kotov on 11.09.2017.
- */
+@Entity
+@Table(name = "topics")
 public class TopicsEntity {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "topic_ID")
     private int topicId;
+
+    @Column(name = "topic_name")
     private String topicName;
+
+    @Column(name = "topic_description")
     private String topicDescription;
+
+    @OneToMany(mappedBy = "topicsByListTopicId")
     private Collection<ListoftopicsinmaterialEntity> listoftopicsinmaterialsByTopicId;
+
+    @OneToMany(mappedBy = "topicsBySectionTopicId")
     private Collection<SectionsEntity> sectionsByTopicId;
 
     public int getTopicId() {
