@@ -2,6 +2,8 @@ package entity;
 
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,6 +21,12 @@ import java.util.Collection;
 @Entity
 @Table(name = "users_access")
 public class UsersAccessEntity {
+
+
+
+
+
+
     @Id
     @GeneratedValue
     @Column(name = "access_ID" )
@@ -32,6 +40,16 @@ public class UsersAccessEntity {
 
     @OneToMany (mappedBy = "usersAccessByUserLogin")
     private Collection<UsersEntity> usersByAccessId;
+
+    //@OneToMany (mappedBy = "usersAccessByUserLogin")
+    //private UsersEntity usersEntity;
+    //public UsersEntity getUsersEntity() {
+    //    return new UsersEntity;
+    //}
+
+    //public void setUsersEntity(UsersEntity usersEntity) {
+      //  this.usersEntity = usersEntity;
+    //}
 
     public int getAccessId() {
         return accessId;
@@ -71,6 +89,8 @@ public class UsersAccessEntity {
 
         return true;
     }
+
+
 
     @Override
     public int hashCode() {

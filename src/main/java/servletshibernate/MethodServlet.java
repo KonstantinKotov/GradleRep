@@ -3,18 +3,51 @@ package servletshibernate;
 import daohibernate.*;
 import entity.*;
 import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.*;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import springdao.*;
 
+import javax.persistence.Access;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 
+
 @WebServlet(name = "MethodServlet")
 public class MethodServlet extends HttpServlet {
+
+    @Autowired
+    AccessInt accessSpringDao;
+    @Autowired
+    UserInt userSpringDao;
+    @Autowired
+    MaterialInt materialSpringDao;
+    @Autowired
+    ListOfTopInt listOfTopicsSpringDao;
+    @Autowired
+    SectionInt sectionSpringDao;
+    @Autowired
+    TopicInt topicSpringDao;
+
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext( this,
+                config.getServletContext());
+    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         handleRequests(request, response);
@@ -29,13 +62,10 @@ public class MethodServlet extends HttpServlet {
         HttpSession session = request.getSession();
         try {
 
-        ManageTopics manageTopics = (ManageTopics) session.getAttribute("manageTopics");
-        ManageSections manageSections = (ManageSections) session.getAttribute("manageSections");
-
             List<ListoftopicsinmaterialEntity> listOfTopics =
                     (List<ListoftopicsinmaterialEntity>) session.getAttribute("listOfTop");
-            TopicsEntity topic = manageTopics.read(listOfTopics.get(id));
-            List<SectionsEntity> listSections = manageSections.read(topic);
+            TopicsEntity topic = topicSpringDao.read(listOfTopics.get(id));
+            List<SectionsEntity> listSections = sectionSpringDao.read(topic);
             session.setAttribute("listOfSections", listSections);
             UsersEntity user = (UsersEntity) session.getAttribute("user");
 
@@ -48,7 +78,7 @@ public class MethodServlet extends HttpServlet {
             getServletContext().getRequestDispatcher("/page3.jsp").forward(request, response);
         } catch (HibernateException e) {
             request.setAttribute("error", "Sorry, we have a problem with DB and we are working on it."+
-                    e.getClass()+ e.getStackTrace());
+                    e.getClass()+ e.getStackTrace()+ e.getMessage());
             getServletContext().getRequestDispatcher("/errorPage.jsp").forward(request, response);
         }
     }
@@ -94,21 +124,21 @@ public class MethodServlet extends HttpServlet {
         HttpSession session = request.getSession();
 
         try {
-            ManageAccess manageAccess = (ManageAccess) session.getAttribute("manageAccess");
-            ManageUser manageUser = (ManageUser) session.getAttribute("manageUser");
-            ManageMaterial manageMaterial = (ManageMaterial) session.getAttribute("manageMaterial");
-            ManageListOfTopics manageListOfTopics = (ManageListOfTopics) session.getAttribute("manageListOfTopics");
+            //ManageAccess manageAccess = (ManageAccess) session.getAttribute("manageAccess");
+            //ManageUser manageUser = (ManageUser) session.getAttribute("manageUser");
+            //ManageMaterial manageMaterial = (ManageMaterial) session.getAttribute("manageMaterial");
+            //ManageListOfTopics manageListOfTopics = (ManageListOfTopics) session.getAttribute("manageListOfTopics");
 
             if (login.isEmpty()) {
                 request.setAttribute("message", "Fill in login field");
             } else {
-                UsersAccessEntity access = manageAccess.read(login);
+                UsersAccessEntity access = accessSpringDao.read(login);
                 if (login.equals(access.getAccessLogin()) && password.equals(access.getAccessPassword())) {
-                    UsersEntity user = manageUser.read(access);
+                    UsersEntity user = userSpringDao.read(access);
 
                     session.setAttribute("user", user);
-                    MaterialsEntity material = manageMaterial.read(user);
-                    List<ListoftopicsinmaterialEntity> listOfTopicsInInfoMaterial = manageListOfTopics.read(material);
+                    MaterialsEntity material = materialSpringDao.read(user);
+                    List<ListoftopicsinmaterialEntity> listOfTopicsInInfoMaterial = listOfTopicsSpringDao.read(material);
                     session.setAttribute("listOfTop", listOfTopicsInInfoMaterial);
 
                     request.setAttribute("user", user.getUserFirstName() + " " + user.getUserSecondName());
@@ -125,9 +155,9 @@ public class MethodServlet extends HttpServlet {
             request.setAttribute("error", "Sorry, we have a problem and we are working on it" +
                     e.getClass()+ e.getStackTrace());
             getServletContext().getRequestDispatcher("/errorPage.jsp").forward(request, response);
-        } catch (Throwable e) {
+             } catch (Throwable e) {
             request.setAttribute("error", "Sorry, we have a problem and we are working on it. ExceptionT"+
-                    e.getClass()+ e.getStackTrace());
+                    e.getClass()+ e.getStackTrace().toString() + e.getLocalizedMessage() + e.getCause());
             getServletContext().getRequestDispatcher("/errorPage.jsp").forward(request, response);
         }
     }
