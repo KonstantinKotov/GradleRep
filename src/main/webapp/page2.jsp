@@ -11,6 +11,16 @@
     <meta charset="utf-8">
     <title>page2</title>
     <link href="style1.css" type="text/css" rel="stylesheet"/>
+    <script>function loadDoc() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("ajaxtest").innerHTML = this.responseText;
+            }
+        };
+        xhttp.open("GET", "ajaxtest.txt", true);
+        xhttp.send();
+    }</script>
 </head>
 
 <body>
@@ -72,6 +82,14 @@
         <div id="section">
             <div id="heading">Добро пожаловать в систему <%= request.getAttribute("user")%></div>
             <div id="sectioncontent">Данные пользователя</div>
+            <div id="ajaxadditionalinfo">
+                <p></p>
+                <button type="button" onclick=loadDoc()>Дополнительные данные для пользователя <%= request.getAttribute("user")
+                %></button>
+                <p id="ajaxtest"></p>
+
+
+            </div>
         </div>
     </div>
 </div>

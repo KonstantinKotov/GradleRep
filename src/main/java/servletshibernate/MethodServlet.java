@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.*;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -24,10 +25,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 
-@WebServlet(name = "MethodServlet")
+@WebServlet("/MethodServlet")
 public class MethodServlet extends HttpServlet {
 
     @Autowired
@@ -99,6 +101,29 @@ public class MethodServlet extends HttpServlet {
                 request.setAttribute("section_name" + i, listOfSections.get(i).getSectionName());
             }
             getServletContext().getRequestDispatcher("/page4.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            request.setAttribute("error", "Sorry, we have a problem and we are working on it. Exception");
+            getServletContext().getRequestDispatcher("/errorPage.jsp").forward(request, response);
+        }
+    }
+
+    public void pageAjax(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Integer id = makeParamID(request, response, "id");
+        HttpSession session = request.getSession();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "text/html; charset=utf-8");
+
+        try {
+            List<SectionsEntity> listOfSections =
+                    (List<SectionsEntity>) session.getAttribute("listOfSections");
+            SectionsEntity section = listOfSections.get(id);
+            response.setContentType("text/html");
+            response.setCharacterEncoding("UTF-8");
+            String content = section.getSectionContent();
+            response.getWriter().write(content);
+
+
 
         } catch (Exception e) {
             request.setAttribute("error", "Sorry, we have a problem and we are working on it. Exception");
@@ -186,9 +211,12 @@ public class MethodServlet extends HttpServlet {
                 case "profile":
                     profile(request, response);
                     break;
+                case "ajax":
+                    pageAjax(request, response);
+                    break;
             }
         } catch (Throwable t) {
-            request.setAttribute("error", "Sorry, we have a problem and we are working on it.");
+            request.setAttribute("error", "Sorry, we have a problem and we are working on it.dispatcher");
             getServletContext().getRequestDispatcher("/errorPage.jsp").forward(request, response);
         }
     }
